@@ -11,16 +11,21 @@
 */
 function	check_expression(expr, rules, facts)
 {
-	let left = check_needed(expr.left, rules, facts);
-	let right = check_needed(expr.right, rules, facts);
-	switch (expr.type)
+	if (expr.type == 'NOT')
+		return (!check_needed(expr.value, rules, facts));
+	else
 	{
-		case 'AND':
-			return (left && right);
-		case 'OR':
-			return (left || right);
-		case 'XOR':
-			return (left ? !right : right);
+		let left = check_needed(expr.left, rules, facts);
+		let right = check_needed(expr.right, rules, facts);
+		switch (expr.type)
+		{
+			case 'AND':
+				return (left && right);
+			case 'OR':
+				return (left || right);
+			case 'XOR':
+				return (left ? !right : right);
+		}
 	}
 }
 
@@ -31,15 +36,12 @@ function	check_needed(needed, rules, facts)
 {
 	let result;
 
-	if (needed.type != 'VALUE' && needed.type != '!VALUE') // [A + B =>]
+	if (needed.type != 'VALUE') // [A + B =>]
 		result = check_expression(needed, rules, facts);
 	else if (needed.value.value == null) // [A or !A =>] and A is not known
 		result = query_solution(needed.value, rules, facts);
 	else if (needed.type == 'VALUE') // [A =>] and A is known
 		result = needed.value.value;
-	else // [!A =>] and A is known
-		result = !needed.value.value;
-	console.log(needed);
 	return (result);
 }
 
@@ -50,7 +52,7 @@ function	query_solution(query, rules, facts)
 	
 	for (let i = 0; i < rules.length; i++)
 	{
-		if (rules[i].given.type != 'VALUE' && rules[i].given.type != '!VALUE') // [=> A + B]
+		if (rules[i].given.type != 'VALUE') // [=> A + B]
 			check_expression(rules[i].given, rules, facts); // Je sais pas trop encore comment faire ça
 		else if (rules[i].given.value === query) // [=> A]
 			result = check_needed(rules[i].needed, rules, facts);
@@ -65,7 +67,7 @@ function	test_main()
 	var facts = {
 		A:	{
 			name: 'A',
-			value: true
+			value: false
 		},
 		B:	{
 			name: 'B',
@@ -77,16 +79,19 @@ function	test_main()
 		},
 		D:	{
 			name: 'D',
-			value: false
+			value: true
 		}
 	};
 	var rules = [
-		{	// A | B => C
+		{	// !A | B => C
 			needed: {
-				type: 'OR',
+				type: 'AND',
 				left: {
-					type: 'VALUE',
-					value: facts.A
+					type: 'NOT',
+					value: {
+						type: 'VALUE',
+						value: facts.A
+					}
 				},
 				right: {
 					type: 'VALUE',
@@ -112,7 +117,6 @@ function	test_main()
 	console.log("========= FACTS ===========");
 	console.log(facts);
 	console.log("========= RULES ===========");
-	console.log(facts);
 	console.log(rules);
 	console.log("========= QUERY ===========");
 	let result = query_solution(facts.C, rules, facts);

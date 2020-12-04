@@ -18,21 +18,33 @@ start
 	= rules+ ;
 
 rules
-	= wsws needed:expression wsws '=>' wsws given:expression wsws next_line {return create_rule(needed, given)} ;
+	= _ws_ needed:expression _ws_ '=>' _ws_ given:expression _ws_ _nl_ {return create_rule(needed, given)} ;
 
 expression
-	= 'z'
-	/ value ;
+	= value:xor {return value}
+	/ value:and {return value}
+	/ value:or {return value}
+	/ evaluation ;
 
-value
-	= value: symbole {return create_expression(value)} 
-	/ '!' value: symbole {return create_not(create_expression(value))} ;
+xor
+	= left:evaluation _ws_ '^' _ws_ right:expression {return create_expression(null, 'XOR', left, right)} ;
+and
+	= left:evaluation _ws_ '+' _ws_ right:expression {return create_expression(null, 'ADD', left, right)} ;
+or
+	= left:evaluation _ws_ '|' _ws_ right:expression {return create_expression(null, 'OR', left, right)} ;
+
+evaluation
+	= 'u' 
+	/ '!(' _ws_ value:expression _ws_ ')' {return create_not(value)}
+	/ '(' _ws_ value:expression _ws_ ')' {return value}
+	/ value:symbole {return create_expression(value)} 
+	/ '!' value:symbole {return create_not(create_expression(value))} ;
 
 symbole
 	= [A-Z] ;
 
-wsws
+_ws_
 	= (' ' / '\t')* ;
 
-next_line
+_nl_
 	= ('\n')+ ;

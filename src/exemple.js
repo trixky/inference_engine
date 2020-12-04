@@ -24,10 +24,10 @@ const structure_condition = {
 const structure_fact = {
     hash: 'ABBCDD',
     facts: {
-        A: false,
-        B: true,
-        C: false,
-        D: true
+        A: {value: false},
+        B: {value: true},
+        C: {value: false},
+        D: {value: true}
     }
 }
 

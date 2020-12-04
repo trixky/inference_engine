@@ -1,0 +1,33 @@
+{
+	function create_rule(needed, given) {
+		return {needed, given};
+	};
+
+	function create_expression(value, type, left, right) {
+		if (value)
+			return {type: 'VALUE', value};
+		return {type, left, right};
+	};
+}
+
+start
+	= rules+ ;
+
+rules
+	= wsws needed:expression wsws '=>' wsws given:expression wsws next_line {return create_rule(needed, given)} ;
+
+expression
+	= 'z'
+	/ value:condition {return create_expression(value)} ;
+
+condition
+	= symbole ;
+
+symbole
+	= [A-Z] ;
+
+wsws
+	= (' ')* ;
+
+next_line
+	= ('\n')+ ;

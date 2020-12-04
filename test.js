@@ -83,19 +83,19 @@ function	test_main()
 		}
 	};
 	var rules = [
-		{	// !A | B => C
+		{	// !(A && B) => C
 			needed: {
-				type: 'AND',
-				left: {
-					type: 'NOT',
-					value: {
+				type: 'NOT',
+				value: {
+					type: 'AND',
+					left: {
 						type: 'VALUE',
 						value: facts.A
+					},
+					right: {
+						type: 'VALUE',
+						value: facts.B
 					}
-				},
-				right: {
-					type: 'VALUE',
-					value: facts.B
 				}
 			},
 			given: {

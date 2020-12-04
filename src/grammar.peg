@@ -8,6 +8,10 @@
 			return {type: 'VALUE', value};
 		return {type, left, right};
 	};
+
+	function create_not(value) {
+		return {type: 'NOT', value}
+	}
 }
 
 start
@@ -18,16 +22,17 @@ rules
 
 expression
 	= 'z'
-	/ value:condition {return create_expression(value)} ;
+	/ value ;
 
-condition
-	= symbole ;
+value
+	= value: symbole {return create_expression(value)} 
+	/ '!' value: symbole {return create_not(create_expression(value))} ;
 
 symbole
 	= [A-Z] ;
 
 wsws
-	= (' ')* ;
+	= (' ' / '\t')* ;
 
 next_line
 	= ('\n')+ ;

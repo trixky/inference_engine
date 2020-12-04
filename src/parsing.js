@@ -6,10 +6,10 @@ const grammar = fs.readFileSync('./src/grammar.peg', 'utf-8');
 // const grammar = fs.readFileSync('./src/grammar.peg.old', 'utf-8');
 const input = fs.readFileSync('./src/input.txt', 'utf-8');
 
-console.log('[' + input + ']\n\n=============================\n\n')
+console.log('[' + input + ']\n\n=============================\n\n');
 
 const parser = peg.generate(grammar);
 const parsed = parser.parse(input);
-console.log(parsed)
+console.log(JSON.stringify(parsed, null, 4));
 
 // 

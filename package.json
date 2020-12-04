@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/trixky/inference_engine/issues"
   },
-  "homepage": "https://github.com/trixky/inference_engine#readme"
+  "homepage": "https://github.com/trixky/inference_engine#readme",
+  "dependencies": {
+    "pegjs": "^0.10.0"
+  }
 }

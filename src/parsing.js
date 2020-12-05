@@ -11,5 +11,3 @@ console.log('[' + input + ']\n\n=============================\n\n');
 const parser = peg.generate(grammar);
 const parsed = parser.parse(input);
 console.log(JSON.stringify(parsed, null, 4));
-
-// 

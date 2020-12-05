@@ -2,25 +2,31 @@
 	const to_rl = (needed, given) => ({needed, given});
 	const to_ex = (value, type, left, right) => value ? {type: 'v', value} : {type, left, right};
 	const to_nt = (v) => ({type: '!', v});
+	const to_fc = (facts) => ({facts});
+	const to_qr = (queries) => ({queries});
 }
 
-start = rules+ ;
+start = _sk_* rules+ initial_facts queries ;
 
-rules = _ws_ n:exp _ws_ '=>' _ws_ g:exp _ws_ _nl_ {return to_rl(n, g)} ;
+rules = _ws_ n:exp _ws_ '=>' _ws_ g:exp _sk_+ {return to_rl(n, g)} ;
+initial_facts = _ws_ '=' f:fact* _sk_+ {return to_fc(f)} ;
+queries = _ws_ '?' q:fact* _sk_+ {return to_qr(q)} ;
 
 exp = xor / or / and / eval ;
 
-xor = l:(or / and / eval) _ws_ '^' _ws_ r:exp {return to_ex(null, '^', l, r)} ;
+xor = l:(or / and / eval) _ws_ '^' _ws_ r:(exp) {return to_ex(null, '^', l, r)} ;
 or = l:(and / eval) _ws_ '|' _ws_ r:(and / or / eval) {return to_ex(null, '|', l, r)} ;
 and = l:(eval) _ws_ '+' _ws_ r:(and / eval) {return to_ex(null, '+', l, r)} ;
 
 eval
-	= '!(' _ws_ v:exp _ws_ ')' {return to_nt(v)}
-	/ '(' _ws_ v:exp _ws_ ')' {return v}
-	/ v:fact {return to_ex(v)} 
-	/ '!' v:fact {return to_nt(to_ex(v))} ;
+	= '!(' _ws_ v:exp _ws_ ')' {return to_nt(v)}	// -
+	/ '!' v:fact {return to_nt(to_ex(v))}			// -
+	/ '(' _ws_ v:exp _ws_ ')' {return v}			// +
+	/ v:fact {return to_ex(v)} ;					// +
 
 fact = [A-Z] ;
 
-_ws_ = (' ' / '\t')* ;
-_nl_ = ('\n')+ ;
+_sk_ = _ws_ _cm_ _nl_ ; // skip
+_ws_ = (' ' / '\t')* ;	// white_space
+_cm_ = ('#' [^\n]*)* ;	// comments
+_nl_ = ('\n')+ ;		// new_line

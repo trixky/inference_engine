@@ -1,1 +1,8 @@
-J => Z + !(A ^ B) | (!C | D ^ U + P) + O
+	#a
+J => Z + !(A ^ B) | (!C | D ^ U + P) + O # toto
+
+=AB
+
+?AB
+
+

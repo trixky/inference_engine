@@ -1,16 +1,15 @@
 {
+	const to_ob = (rules, initial_facts, queries) => ({rules, initial_facts, queries});
 	const to_rl = (needed, given) => ({needed, given});
 	const to_ex = (value, type, left, right) => value ? {type: 'v', value} : {type, left, right};
 	const to_nt = (v) => ({type: '!', v});
-	const to_fc = (facts) => ({facts});
-	const to_qr = (queries) => ({queries});
 }
 
-start = _sk_* rules+ initial_facts queries ;
+start = _sk_* r:rules+ i:initial_facts q:queries {return to_ob(r, i, q)} ;
 
 rules = _ws_ n:exp _ws_ '=>' _ws_ g:exp _sk_+ {return to_rl(n, g)} ;
-initial_facts = _ws_ '=' f:fact* _sk_+ {return to_fc(f)} ;
-queries = _ws_ '?' q:fact* _sk_+ {return to_qr(q)} ;
+initial_facts = _ws_ '=' f:fact* _sk_+ {return f} ;
+queries = _ws_ '?' q:fact* _sk_* {return q} ;
 
 exp = xor / or / and / eval ;
 

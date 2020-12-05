@@ -86,10 +86,16 @@ function	query_solution(query, rules, facts)
 		if (contain.value)
 		{
 			result = check_needed(rules[i].needed, rules, facts);
-			if (contain.not % 2)
+			if (!result) // [A + B =>] False
+				result = null;
+			else if (contain.not % 2)
 				result = !result;
 		}
 	}
+	if (query.value != null) // TODO: Check fact ?
+		result = query.value;
+	else if (result == null)
+		result = false;
 	return (result);
 }
 
@@ -100,7 +106,7 @@ function	test_main()
 	var facts = {
 		A:	{
 			name: 'A',
-			value: false
+			value: true
 		},
 		B:	{
 			name: 'B',
@@ -120,43 +126,23 @@ function	test_main()
 		}
 	};
 	var rules = [
-		{	// !(A + B) => !(E + !C)
-			needed: {
-				type: '!',
-				value: {
-					type: '+',
-					left: {
-						type: 'VALUE',
-						value: facts.A
-					},
-					right: {
-						type: 'VALUE',
-						value: facts.B
-					}
-				}
-			},
-			given: {
-				type: '!',
-				value: {
-					type: '+',
-					left: {
-						type: 'VALUE',
-						value: facts.E
-					},
-					right: {
-						type: '!',
-						value: {
-							type: 'VALUE',
-							value: facts.C
-						}
-					}
-				}
-			}
-		},
-		{	// D => B
+		{	// B => D
 			needed: {
 				type: 'VALUE',
+				value: facts.B
+			},
+			given: {
+				type: 'VALUE',
 				value: facts.D
+			}
+		},
+		{	// !D => B
+			needed: {
+				type: '!',
+				value: {
+					type: 'VALUE',
+					value: facts.D
+				}
 			},
 			given: {
 				type: 'VALUE',
@@ -169,7 +155,7 @@ function	test_main()
 	console.log("========= RULES ===========");
 	console.log(rules);
 	console.log("========= QUERY ===========");
-	let result = query_solution(facts.C, rules, facts);
+	let result = query_solution(facts.D, rules, facts);
 	console.log(result);
 }
 

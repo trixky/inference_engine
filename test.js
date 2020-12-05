@@ -47,7 +47,6 @@ function	check_needed(needed, rules, facts)
 
 /*
 	[=> A + B] // if given contain query
-	TODO: Penser à gérer des cas tricky d'erreur genre [=> A + !A]
 */
 function	given_contain_query(given, query, rules, facts)
 {
@@ -64,8 +63,11 @@ function	given_contain_query(given, query, rules, facts)
 	else if (given.type != 'VALUE')
 	{
 		result = given_contain_query(given.left, query, rules, facts);
-		if (!result.value)
-			result = given_contain_query(given.right, query, rules, facts);
+		result2 = given_contain_query(given.right, query, rules, facts);
+		if (result.value && result2.value && result.not % 2 != result2.not % 2)
+			console.log("\x1b[31mError like [=> A + !A]"); //TODO: Gérer l'erreur
+		else if (!result.value)
+			result = result2;
 	}
 	else if (given.value === query)
 		result.value = true;
@@ -136,7 +138,7 @@ function	test_main()
 				value: facts.D
 			}
 		},
-		{	// !D => B
+		{	// !D => B + !B
 			needed: {
 				type: '!',
 				value: {
@@ -145,8 +147,18 @@ function	test_main()
 				}
 			},
 			given: {
-				type: 'VALUE',
-				value: facts.B
+				type: '+',
+				left: {
+					type: 'VALUE',
+					value: facts.B
+				},
+				right: {
+					type: '!',
+					value: {
+						type: 'VALUE',
+						value: facts.B
+					}
+				}
 			}
 		}
 	];

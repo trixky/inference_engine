@@ -47,7 +47,6 @@ function	check_needed(needed, rules, facts)
 
 /*
 	[=> A + B] // if given contain query
-	TODO: Penser à gérer des cas tricky d'erreur genre [=> A + !A]
 */
 function	given_contain_query(given, query, rules, facts)
 {
@@ -64,8 +63,11 @@ function	given_contain_query(given, query, rules, facts)
 	else if (given.type != 'VALUE')
 	{
 		result = given_contain_query(given.left, query, rules, facts);
-		if (!result.value)
-			result = given_contain_query(given.right, query, rules, facts);
+		result2 = given_contain_query(given.right, query, rules, facts);
+		if (result.value && result2.value && result.not % 2 != result2.not % 2)
+			console.log("\x1b[31mError like [=> A + !A]"); //TODO: Gérer l'erreur
+		else if (!result.value)
+			result = result2;
 	}
 	else if (given.value === query)
 		result.value = true;
@@ -86,10 +88,16 @@ function	query_solution(query, rules, facts)
 		if (contain.value)
 		{
 			result = check_needed(rules[i].needed, rules, facts);
-			if (contain.not % 2)
+			if (!result) // [A + B =>] False
+				result = null;
+			else if (contain.not % 2)
 				result = !result;
 		}
 	}
+	if (query.value != null) // TODO: Check fact ?
+		result = query.value;
+	else if (result == null)
+		result = false;
 	return (result);
 }
 
@@ -100,7 +108,7 @@ function	test_main()
 	var facts = {
 		A:	{
 			name: 'A',
-			value: false
+			value: true
 		},
 		B:	{
 			name: 'B',
@@ -120,47 +128,37 @@ function	test_main()
 		}
 	};
 	var rules = [
-		{	// !(A + B) => !(E + !C)
+		{	// B => D
+			needed: {
+				type: 'VALUE',
+				value: facts.B
+			},
+			given: {
+				type: 'VALUE',
+				value: facts.D
+			}
+		},
+		{	// !D => B + !B
 			needed: {
 				type: '!',
 				value: {
-					type: '+',
-					left: {
-						type: 'VALUE',
-						value: facts.A
-					},
-					right: {
+					type: 'VALUE',
+					value: facts.D
+				}
+			},
+			given: {
+				type: '+',
+				left: {
+					type: 'VALUE',
+					value: facts.B
+				},
+				right: {
+					type: '!',
+					value: {
 						type: 'VALUE',
 						value: facts.B
 					}
 				}
-			},
-			given: {
-				type: '!',
-				value: {
-					type: '+',
-					left: {
-						type: 'VALUE',
-						value: facts.E
-					},
-					right: {
-						type: '!',
-						value: {
-							type: 'VALUE',
-							value: facts.C
-						}
-					}
-				}
-			}
-		},
-		{	// D => B
-			needed: {
-				type: 'VALUE',
-				value: facts.D
-			},
-			given: {
-				type: 'VALUE',
-				value: facts.B
 			}
 		}
 	];
@@ -169,7 +167,7 @@ function	test_main()
 	console.log("========= RULES ===========");
 	console.log(rules);
 	console.log("========= QUERY ===========");
-	let result = query_solution(facts.C, rules, facts);
+	let result = query_solution(facts.D, rules, facts);
 	console.log(result);
 }
 

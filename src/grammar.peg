@@ -3,14 +3,14 @@
 		return {needed, given};
 	};
 
-	function create_expression(value, type, left, right) {
+	function to_exp(value, type, left, right) {
 		if (value)
-			return {type: 'VALUE', value};
+			return {type: 'value', value};
 		return {type, left, right};
 	};
 
-	function create_not(value) {
-		return {type: 'NOT', value}
+	function to_not(v) {
+		return {type: 'NOT', v}
 	}
 }
 
@@ -18,29 +18,31 @@ start
 	= rules+ ;
 
 rules
-	= _ws_ needed:expression _ws_ '=>' _ws_ given:expression _ws_ _nl_ {return create_rule(needed, given)} ;
+	= _ws_ needed:exp _ws_ '=>' _ws_ given:exp _ws_ _nl_ {return create_rule(needed, given)} ;
 
-expression
-	= value:xor {return value}
-	/ value:and {return value}
-	/ value:or {return value}
-	/ evaluation ;
+exp
+	= v:xor {return v}
+	/ v:and {return v}
+	/ v:or {return v}
+	/ eval ;
 
 xor
-	= left:evaluation _ws_ '^' _ws_ right:expression {return create_expression(null, 'XOR', left, right)} ;
+	= l:eval _ws_ '^' _ws_ m:eval _ws_ o:('^' / '+' / '|') _ws_ r:exp {return to_exp(null, o, to_exp(null, '^', l, m), r)}
+	/ l:eval _ws_ '^' _ws_ r:exp {return to_exp(null, '^', l, r)} ;
 and
-	= left:evaluation _ws_ '+' _ws_ right:expression {return create_expression(null, 'ADD', left, right)} ;
+	= l:eval _ws_ '+' _ws_ m:eval _ws_ o:('+' / '|') _ws_ r:exp {return to_exp(null, o, to_exp(null, '+', l, m), r)}
+	/l:eval _ws_ '+' _ws_ r:exp {return to_exp(null, '+', l, r)} ;
 or
-	= left:evaluation _ws_ '|' _ws_ right:expression {return create_expression(null, 'OR', left, right)} ;
+	= l:eval _ws_ '|' _ws_ m:eval _ws_ o:('|') _ws_ r:exp {return to_exp(null, o, to_exp(null, '|', l, m), r)}
+	/ l:eval _ws_ '|' _ws_ r:exp {return to_exp(null, '|', l, r)} ;
 
-evaluation
-	= 'u' 
-	/ '!(' _ws_ value:expression _ws_ ')' {return create_not(value)}
-	/ '(' _ws_ value:expression _ws_ ')' {return value}
-	/ value:symbole {return create_expression(value)} 
-	/ '!' value:symbole {return create_not(create_expression(value))} ;
+eval
+	= '!(' _ws_ v:exp _ws_ ')' {return to_not(v)}
+	/ '(' _ws_ v:exp _ws_ ')' {return v}
+	/ v:fact {return to_exp(v)} 
+	/ '!' v:fact {return to_not(to_exp(v))} ;
 
-symbole
+fact
 	= [A-Z] ;
 
 _ws_

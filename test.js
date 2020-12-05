@@ -1,6 +1,6 @@
-/*	expr is all others things than VALUE or !VALUE like:
+/*	expr is all others things than VALUE like:
 	expr: {
-		type: 'AND',
+		type: '+',
 		left: {
 			[...]
 		},
@@ -11,7 +11,7 @@
 */
 function	check_expression(expr, rules, facts)
 {
-	if (expr.type == 'NOT')
+	if (expr.type == '!')
 		return (!check_needed(expr.value, rules, facts));
 	else
 	{
@@ -19,11 +19,11 @@ function	check_expression(expr, rules, facts)
 		let right = check_needed(expr.right, rules, facts);
 		switch (expr.type)
 		{
-			case 'AND':
+			case '+':
 				return (left && right);
-			case 'OR':
+			case '|':
 				return (left || right);
-			case 'XOR':
+			case '^':
 				return (left ? !right : right);
 		}
 	}
@@ -45,17 +45,50 @@ function	check_needed(needed, rules, facts)
 	return (result);
 }
 
+/*
+	[=> A + B] // if given contain query
+	TODO: Penser à gérer des cas tricky d'erreur genre [=> A + !A]
+*/
+function	given_contain_query(given, query, rules, facts)
+{
+	let result = {
+		value: false, 
+		not: 0
+	};
+
+	if (given.type == '!')
+	{
+		result = given_contain_query(given.value, query, rules, facts);
+		result.not++;
+	}
+	else if (given.type != 'VALUE')
+	{
+		result = given_contain_query(given.left, query, rules, facts);
+		if (!result.value)
+			result = given_contain_query(given.right, query, rules, facts);
+	}
+	else if (given.value === query)
+		result.value = true;
+	else
+		result.value = false;
+	return (result);
+}
+
 /*	query = 'A' // only 1 query at a time */
 function	query_solution(query, rules, facts)
 {	
 	let result;
+	let contain;
 	
 	for (let i = 0; i < rules.length; i++)
 	{
-		if (rules[i].given.type != 'VALUE') // [=> A + B]
-			check_expression(rules[i].given, rules, facts); // Je sais pas trop encore comment faire ça
-		else if (rules[i].given.value === query) // [=> A]
+		contain = given_contain_query(rules[i].given, query, rules, facts);
+		if (contain.value)
+		{
 			result = check_needed(rules[i].needed, rules, facts);
+			if (contain.not % 2)
+				result = !result;
+		}
 	}
 	return (result);
 }
@@ -80,14 +113,18 @@ function	test_main()
 		D:	{
 			name: 'D',
 			value: true
+		},
+		E:	{
+			name: 'E',
+			value: null
 		}
 	};
 	var rules = [
-		{	// !(A && B) => C
+		{	// !(A + B) => !(E + !C)
 			needed: {
-				type: 'NOT',
+				type: '!',
 				value: {
-					type: 'AND',
+					type: '+',
 					left: {
 						type: 'VALUE',
 						value: facts.A
@@ -99,8 +136,21 @@ function	test_main()
 				}
 			},
 			given: {
-				type: 'VALUE',
-				value: facts.C
+				type: '!',
+				value: {
+					type: '+',
+					left: {
+						type: 'VALUE',
+						value: facts.E
+					},
+					right: {
+						type: '!',
+						value: {
+							type: 'VALUE',
+							value: facts.C
+						}
+					}
+				}
 			}
 		},
 		{	// D => B

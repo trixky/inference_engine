@@ -1,0 +1,9 @@
+C | Z => A
+Y => !O
+C => O
+A | B + C => E
+(F | G) + H => E # E False
+
+=CY # E False
+
+?E

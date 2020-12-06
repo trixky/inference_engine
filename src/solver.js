@@ -36,10 +36,8 @@ const check_needed = (needed, rules, facts) => {
 
 	if (needed.type != 'v') // [A + B =>]
 		result = check_expression(needed, rules, facts);
-	else if (needed.value.value == null) // [A or !A =>] and A is not known
+	else
 		result = query_solution(needed.value, rules, facts);
-	else if (needed.type == 'v') // [A =>] and A is known
-		result = needed.value.value;
 	return (result);
 }
 
@@ -78,6 +76,8 @@ const query_solution = (query, rules, facts) => {
 	let result;
 	let contain;
 	
+	if (query.value != null)
+		result = query.value;
 	for (let i = 0; i < rules.length; i++)
 	{
 		contain = given_contain_query(rules[i].given, query, rules, facts);
@@ -95,9 +95,7 @@ const query_solution = (query, rules, facts) => {
 				result = result2
 		}
 	}
-	if (query.value != null) // TODO: Check fact ?
-		result = query.value;
-	else if (result == null)
+	if (query.value == null && result == null)
 		result = false;
 	return (result);
 }

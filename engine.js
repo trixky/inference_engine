@@ -1,6 +1,7 @@
 const parser = require('./src/parser');
 const query_solution = require('./src/solver');
 const path = __dirname + '/' + process.argv[2];
+
 try {
 	const { parsed, facts } = parser(process.cwd() + '/' + process.argv[2]);
 
@@ -14,5 +15,5 @@ try {
 		console.log(query.label + " - " + query_solution(query, parsed.rules, facts));
 	});
 } catch (err) {
-	console.log("\n\n------------------------ PARSING ERROR\n\n");
+	return console.log("\n\n------------------------ PARSING ERROR\n\n");
 }

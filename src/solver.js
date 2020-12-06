@@ -83,11 +83,14 @@ const query_solution = (query, rules, facts) => {
 		contain = given_contain_query(rules[i].given, query, rules, facts);
 		if (contain.value)
 		{
-			result = check_needed(rules[i].needed, rules, facts);
-			if (!result) // [A + B =>] False
-				result = null;
+			let result2;
+			result2 = check_needed(rules[i].needed, rules, facts);
+			if (!result2) // [A + B =>] False
+				result2 = null;
 			else if (contain.not % 2)
-				result = !result;
+				result2 = !result2;
+			if (result == null || !result) // TODO: Case result2 != result & result = true et result2 = false -> Error
+				result = result2
 		}
 	}
 	if (query.value != null) // TODO: Check fact ?

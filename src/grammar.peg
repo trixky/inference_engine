@@ -2,7 +2,7 @@
 	const to_ob = (rules, initial_facts, queries) => ({rules, initial_facts, queries});
 	const to_rl = (needed, given) => ({needed, given});
 	const to_ex = (value, type, left, right) => value ? {type: 'v', value} : {type, left, right};
-	const to_nt = (v) => ({type: '!', v});
+	const to_nt = (value) => ({type: '!', value});
 }
 
 start = _sk_* r:rules+ i:initial_facts q:queries {return to_ob(r, i, q)} ;

@@ -89,7 +89,7 @@ const query_solution = (query, rules, facts) => {
 				result2 = null;
 			else if (contain.not % 2)
 				result2 = !result2;
-			if (result && !result2 || !result && result2)
+			if (result != null && result2 != null && (result && !result2 || !result && result2))
 				throw "Error: "+ query.label + " can't have different values";
 			else if (result == null || !result) 
 				result = result2

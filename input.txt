@@ -1,6 +1,6 @@
-	#a
-J => Z + !(A ^ B) | (!C | D ^ U + P) + O # toto
+A => B
+C => B
 
-=ABR
+=A
 
-?AB
+?B

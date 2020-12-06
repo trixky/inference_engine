@@ -1,4 +1,4 @@
-/*	expr is all others things than VALUE like:
+/*	expr is all others things than v like:
 	expr: {
 		type: '+',
 		left: {
@@ -9,8 +9,7 @@
 		}
 	}
 */
-function	check_expression(expr, rules, facts)
-{
+const check_expression = (expr, rules, facts) => {
 	if (expr.type == '!')
 		return (!check_needed(expr.value, rules, facts));
 	else
@@ -32,15 +31,14 @@ function	check_expression(expr, rules, facts)
 /*	needed is left part of implies or smthg in expr like:
 	[A + B =>] or [A =>] or [A] or [A + B] in expr
 */
-function	check_needed(needed, rules, facts)
-{
+const check_needed = (needed, rules, facts) => {
 	let result;
 
-	if (needed.type != 'VALUE') // [A + B =>]
+	if (needed.type != 'v') // [A + B =>]
 		result = check_expression(needed, rules, facts);
 	else if (needed.value.value == null) // [A or !A =>] and A is not known
 		result = query_solution(needed.value, rules, facts);
-	else if (needed.type == 'VALUE') // [A =>] and A is known
+	else if (needed.type == 'v') // [A =>] and A is known
 		result = needed.value.value;
 	return (result);
 }
@@ -48,8 +46,7 @@ function	check_needed(needed, rules, facts)
 /*
 	[=> A + B] // if given contain query
 */
-function	given_contain_query(given, query, rules, facts)
-{
+const given_contain_query = (given, query, rules, facts) => {
 	let result = {
 		value: false, 
 		not: 0
@@ -60,7 +57,7 @@ function	given_contain_query(given, query, rules, facts)
 		result = given_contain_query(given.value, query, rules, facts);
 		result.not++;
 	}
-	else if (given.type != 'VALUE')
+	else if (given.type != 'v')
 	{
 		result = given_contain_query(given.left, query, rules, facts);
 		result2 = given_contain_query(given.right, query, rules, facts);
@@ -77,8 +74,7 @@ function	given_contain_query(given, query, rules, facts)
 }
 
 /*	query = 'A' // only 1 query at a time */
-function	query_solution(query, rules, facts)
-{	
+const query_solution = (query, rules, facts) => {
 	let result;
 	let contain;
 	
@@ -101,74 +97,4 @@ function	query_solution(query, rules, facts)
 	return (result);
 }
 
-/* TEST PURPOSES */
-
-function	test_main()
-{
-	var facts = {
-		A:	{
-			name: 'A',
-			value: true
-		},
-		B:	{
-			name: 'B',
-			value: null
-		},
-		C:	{
-			name: 'C',
-			value: null
-		},
-		D:	{
-			name: 'D',
-			value: true
-		},
-		E:	{
-			name: 'E',
-			value: null
-		}
-	};
-	var rules = [
-		{	// B => D
-			needed: {
-				type: 'VALUE',
-				value: facts.B
-			},
-			given: {
-				type: 'VALUE',
-				value: facts.D
-			}
-		},
-		{	// !D => B + !B
-			needed: {
-				type: '!',
-				value: {
-					type: 'VALUE',
-					value: facts.D
-				}
-			},
-			given: {
-				type: '+',
-				left: {
-					type: 'VALUE',
-					value: facts.B
-				},
-				right: {
-					type: '!',
-					value: {
-						type: 'VALUE',
-						value: facts.B
-					}
-				}
-			}
-		}
-	];
-	console.log("========= FACTS ===========");
-	console.log(facts);
-	console.log("========= RULES ===========");
-	console.log(rules);
-	console.log("========= QUERY ===========");
-	let result = query_solution(facts.D, rules, facts);
-	console.log(result);
-}
-
-test_main();
+module.exports = query_solution;

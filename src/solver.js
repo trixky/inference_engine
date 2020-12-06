@@ -80,6 +80,12 @@ const query_solution = (query, rules, facts) => {
 		result = query.value;
 	for (let i = 0; i < rules.length; i++)
 	{
+		if (rules.hash == "default")
+			rules.hash = query.label;
+		else if (rules.hash.includes(query.label))
+			continue;
+		else
+			rules.hash = rules.hash.concat(query.label);
 		contain = given_contain_query(rules[i].given, query, rules, facts);
 		if (contain.value)
 		{

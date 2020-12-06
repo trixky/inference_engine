@@ -62,7 +62,7 @@ const given_contain_query = (given, query, rules, facts) => {
 		result = given_contain_query(given.left, query, rules, facts);
 		result2 = given_contain_query(given.right, query, rules, facts);
 		if (result.value && result2.value && result.not % 2 != result2.not % 2)
-			console.log("\x1b[31mError like [=> A + !A]"); //TODO: Gérer l'erreur
+			throw "Error like [=> A + !A]";
 		else if (!result.value)
 			result = result2;
 	}
@@ -89,7 +89,9 @@ const query_solution = (query, rules, facts) => {
 				result2 = null;
 			else if (contain.not % 2)
 				result2 = !result2;
-			if (result == null || !result) // TODO: Case result2 != result & result = true et result2 = false -> Error
+			if (result && !result2 || !result && result2)
+				throw "Error: "+ query.label + " can't have different values";
+			else if (result == null || !result) 
 				result = result2
 		}
 	}

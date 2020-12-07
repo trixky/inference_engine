@@ -14,7 +14,7 @@ try {
 		parsed.rules.forEach((rule) => {
 			rule.hash = "default";
 		});
-		console.log(query.label+ " - " + query_solution(query, parsed.rules, facts));
+		console.log(query.label+ " - " + query_solution(query, parsed.rules));
 	});
 } catch (error) {
 	console.log("\x1b[31m%s\x1b[0m", error);

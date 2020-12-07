@@ -54,23 +54,25 @@ const generate_facts = parsed => {
 };
 
 const parser = path => {
-	const grammar = fs.readFileSync(__dirname + '/grammar.peg', 'utf-8');
-	const input = fs.readFileSync(path, 'utf-8');
-	const parser = peg.generate(grammar);
+	let grammar;
+	let input;
+	let parser;
 
-	console.log("passage 1")
-	
 	try {
-		console.log("passage 2")
+		grammar = fs.readFileSync(__dirname + '/grammar.peg', 'utf-8');
+		input = fs.readFileSync(path, 'utf-8');
+		parser = peg.generate(grammar);
+	} catch (_) {
+		throw new Error('input is not readable, or not finded')
+	}
+
+	try {
 		const parsed = parser.parse(input);
-		console.log("passage 3")
 		parser.parse(input);
 		const facts = generate_facts(parsed);
-		console.log("passage 4")
-
 		return {parsed, facts};
-	} catch (err) {
-		return null;
+	} catch (_) {
+		throw new Error('input bad formatted')
 	}
 };
 

@@ -20,6 +20,7 @@ and = l:(eval) _ws_* '+' _ws_* r:(and / eval) {return to_ex(null, '+', l, r)} ;
 eval
 	= '!(' _ws_* v:exp _ws_* ')' {return to_nt(v)}	// -
 	/ '!' v:fact {return to_nt(to_ex(v))}			// -
+	/ '(((' _ws_* v:exp _ws_* ')))' {return v}			// +
 	/ '(' _ws_* v:exp _ws_* ')' {return v}			// +
 	/ v:fact {return to_ex(v)} ;					// +
 

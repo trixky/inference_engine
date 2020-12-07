@@ -58,9 +58,15 @@ const parser = path => {
 	const input = fs.readFileSync(path, 'utf-8');
 	const parser = peg.generate(grammar);
 
+	console.log("passage 1")
+	
 	try {
+		console.log("passage 2")
 		const parsed = parser.parse(input);
+		console.log("passage 3")
+		parser.parse(input);
 		const facts = generate_facts(parsed);
+		console.log("passage 4")
 
 		return {parsed, facts};
 	} catch (err) {

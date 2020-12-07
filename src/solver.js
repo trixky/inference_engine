@@ -75,7 +75,7 @@ const given_contain_query = (given, query, rules, facts) => {
 const query_solution = (query, rules, facts) => {
 	let result;
 	let contain;
-	
+
 	if (query.value != null)
 		result = query.value;
 	rules.forEach((rule) => {
@@ -103,6 +103,8 @@ const query_solution = (query, rules, facts) => {
 	});
 	if (query.value == null && result == null)
 		result = false;
+	if (result)
+		query.value = result;
 	return (result);
 }
 

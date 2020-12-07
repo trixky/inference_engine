@@ -6,11 +6,12 @@ try {
 	const { parsed, facts } = parser(process.cwd() + '/' + process.argv[2]);
 	console.log("\n\n------------------------ PARSED\n\n")
 	console.log(JSON.stringify(parsed, null, 4));
+	console.log(parsed);
 	console.log("\n\n------------------------ FACTS\n\n")
 	console.log(facts);
 	console.log("\n\n------------------------ RESULTS\n\n");
 	parsed.queries.forEach((query) => {
-		parsed.rules.forEach((rule) => { // TODO: A VIRER APRES
+		parsed.rules.forEach((rule) => {
 			rule.hash = "default";
 		});
 		console.log(query.label+ " - " + query_solution(query, parsed.rules, facts));

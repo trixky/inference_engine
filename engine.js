@@ -9,12 +9,11 @@ try {
 	console.log("\n\n------------------------ FACTS\n\n")
 	console.log(facts);
 	console.log("\n\n------------------------ RESULTS\n\n");
-	parsed.rules.forEach((rule) => { // TODO: A VIRER APRES
-		rule.hash = "default";
-	});
 	parsed.queries.forEach((query) => {
-		let rules = Object.assign({}, parsed.rules);
-		console.log(query.label+ " - " + query_solution(query, rules, facts));
+		parsed.rules.forEach((rule) => { // TODO: A VIRER APRES
+			rule.hash = "default";
+		});
+		console.log(query.label+ " - " + query_solution(query, parsed.rules, facts));
 	});
 } catch (error) {
 	console.log("\x1b[31m%s\x1b[0m", error);

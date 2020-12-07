@@ -78,29 +78,29 @@ const query_solution = (query, rules, facts) => {
 	
 	if (query.value != null)
 		result = query.value;
-	for (let i = 0; i < rules.length; i++)
-	{
-		if (rules.hash == "default")
-			rules.hash = query.label;
-		else if (rules.hash.includes(query.label))
-			continue;
-		else
-			rules.hash = rules.hash.concat(query.label);
-		contain = given_contain_query(rules[i].given, query, rules, facts);
-		if (contain.value)
+	rules.forEach((rule) => {
+		if (!rule.hash.includes(query.label) || rule.hash == "default")
 		{
-			let result2;
-			result2 = check_needed(rules[i].needed, rules, facts);
-			if (!result2) // [A + B =>] False
-				result2 = null;
-			else if (contain.not % 2)
-				result2 = !result2;
-			if (result != null && result2 != null && (result && !result2 || !result && result2))
-				throw "Error: "+ query.label + " can't have different values";
-			else if (result == null || !result) 
-				result = result2
+			if (rule.hash == "default")
+				rule.hash = query.label;
+			else
+				rule.hash = rule.hash.concat(query.label);
+			contain = given_contain_query(rule.given, query, rules, facts);
+			if (contain.value)
+			{
+				let result2;
+				result2 = check_needed(rule.needed, rules, facts);
+				if (!result2) // [A + B =>] False
+					result2 = null;
+				else if (contain.not % 2)
+					result2 = !result2;
+				if (result != null && result2 != null && (result && !result2 || !result && result2)	)
+					throw "Error: "+ query.label + " can't have different values";
+				else if (result == null || !result) 
+					result = result2
+			}
 		}
-	}
+	});
 	if (query.value == null && result == null)
 		result = false;
 	return (result);

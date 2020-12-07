@@ -18,11 +18,13 @@ or = l:(and / eval) _ws_* '|' _ws_* r:(and / or / eval) {return to_ex(null, '|',
 and = l:(eval) _ws_* '+' _ws_* r:(and / eval) {return to_ex(null, '+', l, r)} ;
 
 eval
-	= '!(' _ws_* v:exp _ws_* ')' {return to_nt(v)}	// -
-	/ '!' v:fact {return to_nt(to_ex(v))}			// -
-	/ '(((' _ws_* v:exp _ws_* ')))' {return v}			// +
-	/ '(' _ws_* v:exp _ws_* ')' {return v}			// +
-	/ v:fact {return to_ex(v)} ;					// +
+	= '!(' _ws_* '!(' _ws_* v:exp _ws_* ')' _ws_* ')' {return to_ex(v)}				// !(!(x))
+	/ '!(' _ws_* v:exp _ws_* ')' {return to_nt(v)}									// !(x)
+	/ '!' v:fact {return to_nt(to_ex(v))}											// !x
+	/ '(' _ws_* '(' _ws_* '(' _ws_* v:exp _ws_* ')' _ws_* ')' _ws_* ')' {return v}	// (((x)))
+	/ '(' _ws_* '(' _ws_* v:exp _ws_* ')' _ws_* ')' {return v}						// ((x))
+	/ '(' _ws_* v:exp _ws_* ')' {return v}											// (x)
+	/ v:fact {return to_ex(v)} ;													// f
 
 fact = [A-Z] ;
 

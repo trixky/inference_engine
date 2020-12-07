@@ -9,13 +9,13 @@
 		}
 	}
 */
-const check_expression = (expr, rules, facts) => {
+const check_expression = (expr, rules) => {
 	if (expr.type == '!')
-		return (!check_needed(expr.value, rules, facts));
+		return (!check_needed(expr.value, rules));
 	else
 	{
-		let left = check_needed(expr.left, rules, facts);
-		let right = check_needed(expr.right, rules, facts);
+		let left = check_needed(expr.left, rules);
+		let right = check_needed(expr.right, rules);
 		switch (expr.type)
 		{
 			case '+':
@@ -31,20 +31,20 @@ const check_expression = (expr, rules, facts) => {
 /*	needed is left part of implies or smthg in expr like:
 	[A + B =>] or [A =>] or [A] or [A + B] in expr
 */
-const check_needed = (needed, rules, facts) => {
+const check_needed = (needed, rules) => {
 	let result;
 
 	if (needed.type != 'v') // [A + B =>]
-		result = check_expression(needed, rules, facts);
+		result = check_expression(needed, rules);
 	else
-		result = query_solution(needed.value, rules, facts);
+		result = query_solution(needed.value, rules);
 	return (result);
 }
 
 /*
 	[=> A + B] // if given contain query
 */
-const given_contain_query = (given, query, rules, facts) => {
+const given_contain_query = (given, query) => {
 	let result = {
 		value: false, 
 		not: 0
@@ -52,13 +52,13 @@ const given_contain_query = (given, query, rules, facts) => {
 
 	if (given.type == '!')
 	{
-		result = given_contain_query(given.value, query, rules, facts);
+		result = given_contain_query(given.value, query);
 		result.not++;
 	}
 	else if (given.type != 'v')
 	{
-		result = given_contain_query(given.left, query, rules, facts);
-		result2 = given_contain_query(given.right, query, rules, facts);
+		result = given_contain_query(given.left, query);
+		result2 = given_contain_query(given.right, query);
 		if (result.value && result2.value && result.not % 2 != result2.not % 2)
 			throw "Error like [=> A + !A]";
 		else if (!result.value)
@@ -72,7 +72,7 @@ const given_contain_query = (given, query, rules, facts) => {
 }
 
 /*	query = 'A' // only 1 query at a time */
-const query_solution = (query, rules, facts) => {
+const query_solution = (query, rules) => {
 	let result;
 	let contain;
 
@@ -85,11 +85,11 @@ const query_solution = (query, rules, facts) => {
 				rule.hash = query.label;
 			else
 				rule.hash = rule.hash.concat(query.label);
-			contain = given_contain_query(rule.given, query, rules, facts);
+			contain = given_contain_query(rule.given, query, rules);
 			if (contain.value)
 			{
 				let result2;
-				result2 = check_needed(rule.needed, rules, facts);
+				result2 = check_needed(rule.needed, rules);
 				if (!result2) // [A + B =>] False
 					result2 = null;
 				else if (contain.not % 2)

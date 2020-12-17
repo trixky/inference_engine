@@ -1,0 +1,8 @@
+B + !C => A
+
+#[INITIAL FACTS HERE]
+?A
+
+=B
+
+# A should be true.

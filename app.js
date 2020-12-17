@@ -3,6 +3,8 @@ const query_solution = require('./src/solver');
 const path = __dirname + '/' + process.argv[2];
 
 try {
+	if	(process.argv.length != 3)
+		throw "usage: node app.js [*.txt]";
 	const { parsed, facts } = parser(process.cwd() + '/' + process.argv[2]);
 	parsed.queries.forEach((query) => {
 		parsed.rules.forEach((rule) => {

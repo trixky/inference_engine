@@ -2,10 +2,10 @@
 
 ## install
 ```
-	npm install
+npm install
 ```
 
 ## usage
 ```
-	node app.js [file]
+node app.js [*.txt]
 ```

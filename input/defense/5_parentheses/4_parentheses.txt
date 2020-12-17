@@ -6,4 +6,4 @@ A | B + C => E
 #[INITIAL FACTS HERE]
 ?E
 
-# E should be false.
+# E should be true.

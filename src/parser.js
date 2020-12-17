@@ -58,21 +58,25 @@ const parser = path => {
 	let input;
 	let parser;
 
-	try {
-		grammar = fs.readFileSync(__dirname + '/grammar.peg', 'utf-8');
-		input = fs.readFileSync(path, 'utf-8');
-		parser = peg.generate(grammar);
-	} catch (_) {
-		throw new Error('input is not readable, or not finded')
-	}
-
-	try {
-		const parsed = parser.parse(input);
-		parser.parse(input);
-		const facts = generate_facts(parsed);
-		return {parsed, facts};
-	} catch (_) {
-		throw new Error('input bad formatted')
+	if (path && path.split('/').pop().length > 4 && path.match(/.txt$/)) {
+		try {
+			grammar = fs.readFileSync(__dirname + '/grammar.peg', 'utf-8');
+			input = fs.readFileSync(path, 'utf-8');
+			parser = peg.generate(grammar);
+		} catch (_) {
+			throw 'input is not readable, or not finded'
+		}
+		
+		try {
+			const parsed = parser.parse(input);
+			parser.parse(input);
+			const facts = generate_facts(parsed);
+			return {parsed, facts};
+		} catch (_) {
+			throw 'input bad formatted'
+		}
+	} else {
+		throw 'input must have .txt extension'
 	}
 };
 

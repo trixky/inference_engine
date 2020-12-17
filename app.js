@@ -1,6 +1,5 @@
 const parser = require('./src/parser');
 const query_solution = require('./src/solver');
-const path = __dirname + '/' + process.argv[2];
 
 try {
 	if	(process.argv.length != 3)

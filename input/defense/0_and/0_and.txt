@@ -7,9 +7,9 @@ L + M => K
 O + P => L + N
 N => M
 
+=DEIJOP
+
 #[INITIAL FACTS HERE]
 ?AFKP
-
-=DEIJOP
 
 # AFKP is true.

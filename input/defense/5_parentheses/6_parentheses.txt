@@ -1,9 +1,9 @@
 A | B + C => E
 (F | G) + H => E
 
+=F
+
 #[INITIAL FACTS HERE]
 ?E
-
-=F
 
 # E should be false.

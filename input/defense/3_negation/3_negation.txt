@@ -1,8 +1,8 @@
 B + !C => A
 
+=BC
+
 #[INITIAL FACTS HERE]
 ?A
-
-=BC
 
 # A should be false.

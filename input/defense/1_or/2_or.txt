@@ -2,9 +2,9 @@ B + C => A
 D | E => B
 B => C
 
+=E
+
 #[INITIAL FACTS HERE]
 ?A
-
-=DE
 
 # A should be true.

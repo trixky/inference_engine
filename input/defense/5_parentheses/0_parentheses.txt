@@ -1,13 +1,9 @@
 A | B + C => E
 (F | G) + H => E
 
+=
+
 #[INITIAL FACTS HERE]
 ?E
 
-=
-
 # E should be false.
-
-With =H, E should be false.
-With =FH, E should be true.
-With =GH, E should be true.

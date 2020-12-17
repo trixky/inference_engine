@@ -7,9 +7,9 @@ L + M => K
 O + P => L + N
 N => M
 
+=DEIJP
+
 #[INITIAL FACTS HERE]
 ?AFKP
-
-=DEIJP
 
 # AFP is true, K is false.

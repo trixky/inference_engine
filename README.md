@@ -4,20 +4,18 @@ An [inference engine](https://en.wikipedia.org/wiki/Inference_engine) using [bac
 
 ![Recordit GIF](https://i.ibb.co/Sx7nNrn/ezgif-com-crop.gif)
 
-## Rules
-
-Input file syntax:
+## Input
 
 - Facts are capital letters
 - First lines are conditions : <[input expression] => [output expression]>
 - Expressions can contain:
-  - Facts __[A-Z]__
-  - Priority parenthesis __()__
-  - Negation __!__
+  - Facts **[A-Z]**
+  - Priority parenthesis **()**
+  - Negation **!**
   - Operators [&nbsp;__^__ xor / __+__ and / __|__ or&nbsp;]
-- Initial facts line : <=[A-Z]*>
-- Expected results line : <?[A-Z]*>
-- comments __#__ ...
+- Initial facts line : <=[A-Z]\*>
+- Expected results line : <?[A-Z]\*>
+- comments **#** ...
 
 > Output expression cannot include the _xor_ and _or_ operator
 

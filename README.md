@@ -41,5 +41,5 @@ A + !(B) => D
 ```
 npm install
 
-node app.js [*.txt]
+node app.js input/defense/0_and/1_and.txt
 ```

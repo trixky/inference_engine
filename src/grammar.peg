@@ -7,24 +7,35 @@
 
 start = _sk_* r:rules+ i:initial_facts q:queries {return to_ob(r, i, q)} ;
 
-rules = _ws_* n:exp _ws_* '=>' _ws_* g:exp _sk_+ {return to_rl(n, g)} ;
+rules = _ws_* n:l_exp _ws_* '=>' _ws_* g:r_exp _sk_+ {return to_rl(n, g)} ;
 initial_facts = _ws_* '=' f:fact* _sk_+ {return f} ;
 queries = _ws_* '?' q:fact* _sk_* _se_ {return q} ;
 
-exp = xor / or / and / eval ;
+l_exp = l_xor / l_or / l_and / l_eval ;		// left  expression
+r_exp = r_and / r_eval ;					// right expression
 
-xor = l:(or / and / eval) _ws_* '^' _ws_* r:(exp) {return to_ex(null, '^', l, r)} ;
-or = l:(and / eval) _ws_* '|' _ws_* r:(and / or / eval) {return to_ex(null, '|', l, r)} ;
-and = l:(eval) _ws_* '+' _ws_* r:(and / eval) {return to_ex(null, '+', l, r)} ;
+l_xor = l:(l_or / l_and / l_eval) _ws_* '^' _ws_* r:(l_exp) {return to_ex(null, '^', l, r)} ;			// left  expression
+l_or = l:(l_and / l_eval) _ws_* '|' _ws_* r:(l_and / l_or / l_eval) {return to_ex(null, '|', l, r)} ;	// left  expression
+l_and = l:(l_eval) _ws_* '+' _ws_* r:(l_and / l_eval) {return to_ex(null, '+', l, r)} ;					// left  expression
+r_and = l:(r_eval) _ws_* '+' _ws_* r:(r_and / r_eval) {return to_ex(null, '+', l, r)} ;					// right expression
 
-eval
-	= '!(' _ws_* '!(' _ws_* v:exp _ws_* ')' _ws_* ')' {return to_ex(v)}				// !(!(x))
-	/ '!(' _ws_* v:exp _ws_* ')' {return to_nt(v)}									// !(x)
-	/ '!' v:fact {return to_nt(to_ex(v))}											// !x
-	/ '(' _ws_* '(' _ws_* '(' _ws_* v:exp _ws_* ')' _ws_* ')' _ws_* ')' {return v}	// (((x)))
-	/ '(' _ws_* '(' _ws_* v:exp _ws_* ')' _ws_* ')' {return v}						// ((x))
-	/ '(' _ws_* v:exp _ws_* ')' {return v}											// (x)
-	/ v:fact {return to_ex(v)} ;													// f
+l_eval																				// left expression
+	= '!(' _ws_* '!(' _ws_* v:l_exp _ws_* ')' _ws_* ')' {return to_ex(v)}				// !(!(x))
+	/ '!(' _ws_* v:l_exp _ws_* ')' {return to_nt(v)}									// !(x)
+	/ '!' v:fact {return to_nt(to_ex(v))}												// !x
+	/ '(' _ws_* '(' _ws_* '(' _ws_* v:l_exp _ws_* ')' _ws_* ')' _ws_* ')' {return v}	// (((x)))
+	/ '(' _ws_* '(' _ws_* v:l_exp _ws_* ')' _ws_* ')' {return v}						// ((x))
+	/ '(' _ws_* v:l_exp _ws_* ')' {return v}											// (x)
+	/ v:fact {return to_ex(v)} ;														// f
+
+r_eval																				// right expression
+	= '!(' _ws_* '!(' _ws_* v:r_exp _ws_* ')' _ws_* ')' {return to_ex(v)}				// !(!(x))
+	/ '!(' _ws_* v:r_exp _ws_* ')' {return to_nt(v)}									// !(x)
+	/ '!' v:fact {return to_nt(to_ex(v))}												// !x
+	/ '(' _ws_* '(' _ws_* '(' _ws_* v:r_exp _ws_* ')' _ws_* ')' _ws_* ')' {return v}	// (((x)))
+	/ '(' _ws_* '(' _ws_* v:r_exp _ws_* ')' _ws_* ')' {return v}						// ((x))
+	/ '(' _ws_* v:r_exp _ws_* ')' {return v}											// (x)
+	/ v:fact {return to_ex(v)} ;														// f
 
 fact = [A-Z] ;
 

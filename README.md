@@ -2,7 +2,7 @@
 
 An [inference engine](https://en.wikipedia.org/wiki/Inference_engine) using [backward chaining](https://en.wikipedia.org/wiki/Backward_chaining) algorithm capable of reasoning on a set of rules and initial facts in order to deduce certain other facts on [node.js](https://nodejs.org/) with a [PEG parser](https://en.wikipedia.org/wiki/Parsing_expression_grammar).
 
-![Recordit GIF](https://i.ibb.co/Sx7nNrn/ezgif-com-crop.gif)
+![Recordit GIF](https://github.com/trixky/inference_engine/blob/main/.demo/demo.gif?raw=true)
 
 ## Input
 
